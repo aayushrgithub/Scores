@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { db } from "../firebse";
+import { collection, addDoc } from "firebase/firestore";
+
+
 const Score = () => {
 
     const [check,setCheck] = useState(false);
@@ -14,6 +18,25 @@ const Score = () => {
     const [ballCount,setBallCount] = useState(6);
 
  
+    const post = async (e) => {
+        e.preventDefault();  
+       console.log("Hello")
+        try {
+            
+            const docRef = await addDoc(collection(db, "todos"), {
+              total:total,
+              Wickets:wicketCount,
+              Player:arrOut.map((item)=>(
+                {item}
+              ))
+            });
+            console.log("Document written with ID: ", docRef.id);
+          } catch (e) {
+            console.error("Error adding document: ", e);
+          }
+    }
+   
+
 
     const handleWicket = (value) => {
         {value==1?setArrOut([...arrOut,{batsman:b1,runs:b1Runs}]):setArrOut([...arrOut,{batsman:b2,runs:b2Runs}])}
@@ -81,7 +104,7 @@ const Score = () => {
             <h1 className="text-center text-xl text-red-700">Balls Left : {ballCount} </h1>
             </div>
             
-            {innings?<h1 className="text-center">Innings Completed</h1>:null}
+            {innings?<h1 onClick={post} className="text-center">Innings Completed</h1>:null}
             <div className="sm:flex gap-3 items-center mt-3">
                 <div className="flex gap-2">
                 <input checked={check} type="checkbox" onChange={()=>setCheck(!check)} />
